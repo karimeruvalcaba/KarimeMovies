@@ -33,44 +33,44 @@ const MovieDetailPage = () => {
     };
 
     const toggleFavorite = async () => {
-        const stored = localStorage.getItem("favorites");
-        let favs : number[] = [];
+        const sessionId = localStorage.getItem("tmdb_session_id");
+        const accountId = localStorage.getItem("tmdb_account_id");
 
-        try{
+        if (!sessionId || !accountId) {
+            alert("Bro please sign in with TMDb to favorite movies. Go to the navbar and click login.");
+            return;
+        }
+
+        // Only allow toggling if logged in:
+        const stored = localStorage.getItem("favorites");
+        let favs: number[] = [];
+
+        try {
             const parsed = JSON.parse(stored || "[]");
             favs = Array.isArray(parsed) ? parsed : [];
-        } catch{
+        } catch {
             favs = [];
         }
 
         const newIsFavorite = !favs.includes(movieId);
 
-        if (newIsFavorite){
+        if (newIsFavorite) {
             favs.push(movieId);
-        }else{
+        } else {
             favs = favs.filter((id) => id !== movieId);
         }
 
         localStorage.setItem("favorites", JSON.stringify(favs));
         setIsFavorite(newIsFavorite);
 
-        //Sync only if logged in
-        const sessionId = localStorage.getItem("tmdb_session_id");
-        const accountId = localStorage.getItem("tmdb_account_id");
-
-        if (!sessionId || !accountId){
-            alert("Bro please sign in with TMDb to sync your favorites online. Go to the navbar and click login")
-            console.warn("Skipped TMDb sync - use not authenticated.")
-            return;
-        }
-
-        try{
+        try {
             await markAsFavorite(movieId, newIsFavorite);
             console.log("✅ Synced with TMDb");
-        }catch(err){
+        } catch (err) {
             console.error("❌ Failed to sync with TMDb", err);
         }
-    };
+        };
+
 
     useEffect(() => {
 
