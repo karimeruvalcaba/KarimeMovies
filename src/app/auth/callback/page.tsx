@@ -20,7 +20,7 @@ function CallbackHandler() {
       const sessionId = res.data.session_id;
       localStorage.setItem("tmdb_session_id", sessionId);
 
-      // Fetch account ID
+      // Fetch account ID of user
       const accRes = await api.get(`/account?session_id=${sessionId}`);
       localStorage.setItem("tmdb_account_id", accRes.data.id);
 
